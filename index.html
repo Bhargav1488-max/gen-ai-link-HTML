@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generative AI Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .chatbox {
+      max-width: 600px;
+      margin:  auto;
+      background: white;
+      border: 10px solid #000000;
+      padding: 60px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .messages {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    .message {
+      margin: 10px 0;
+    }
+    .user {
+      text-align: right;
+      color: rgb(0, 0, 0);
+    }
+    .bot {
+      text-align: left;
+      color: rgb(0, 0, 0);
+    }
+    input {
+      width: calc(100% - 80px);
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: blue;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="chatbox">
+    <div class="messages" id="messages"></div>
+    <input type="text" id="userInput" placeholder="Type your message Bhargav..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('background.jpg'); /* Replace with your image path */
+      background-size: cover; /* Ensure the image covers the entire page */
+      background-position: center; /* Center the image */
+      background-repeat: no-repeat; /* Prevent the image from repeating */
+      background-attachment: fixed; /* Make the background image fixed while scrolling */
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      color: white;
+      text-align: center;
+      padding-top: 50px;
+    }
+  </style>
+
+  <script>
+    async function sendMessage() {
+      const userInput = document.getElementById("userInput").value;
+      if (!userInput.trim()) return;
+
+      // Display user message
+      const messagesDiv = document.getElementById("messages");
+      const userMessage = document.createElement("div");
+      userMessage.className = "message user";
+      userMessage.textContent = userInput;
+      messagesDiv.appendChild(userMessage);
+
+      // Clear input field
+      document.getElementById("userInput").value = "";
+
+      try {
+        // Send message to backend
+        const response = await fetch("http://127.0.0.1:5000/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: userInput }),
+        });
+
+        const data = await response.json();
+
+        // Display bot response
+        const botMessage = document.createElement("div");
+        botMessage.className = "message bot";
+        botMessage.textContent = data.response || data.error;
+        messagesDiv.appendChild(botMessage);
+
+        // Scroll to the latest message
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  </script>
+</body>
+</html>
